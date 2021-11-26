@@ -92,11 +92,11 @@ Then, run:
 
     geth --nodiscover --http --http.vhosts "*" --http.addr 0.0.0.0 --http.port 8545 --http.api admin,personal,eth,net,web3,txpool,miner,clique --mine --unlock CF6d4AeCc9ABE064C8f46115746115aa4967700c --password ~/.ethereum/password.txt --allow-insecure-unlock
 
-Make sure to put the initial account address after the `--unlock` option.
+Make sure to put the initial account address after the `--unlock` option, ưhich is `CF6d4AeCc9ABE064C8f46115746115aa4967700c` in this example.
 
 That command will start an Ethereum network, which:
 - Disable peers discovery. Peers must be added manually.
-- Enable HTTP RPC service on port `8545` and listen on all interface.
+- Enable HTTP RPC service on port `8545` and listen on all interfaces.
 - Allow RPC calls from all hosts.
 - Enable these RPC APIs: `admin`, `personal`, `eth`, `net`, `web3`, `txpool`, `miner`, `clique`. Refer to [this](https://geth.ethereum.org/docs/rpc/server) link for the API documentation.
 - Enable mining.
@@ -144,15 +144,15 @@ Open MetaMask wallet, and create a new network with the following parameters:
 After that, switch to this new network. The MetaMask's account which was used to receive the transaction from the network's initial account in the previous step should now show `100 ETH` in its balance.
 
 ## Import the initial account into MetaMask
-To import the network's initial account into MetaMask, first we need its private key. We will create Node program to do this.
+To import the network's initial account into MetaMask, first we need its private key. We will create a Node program to do this.
 
 Run the following commands at the shell to create a new Node project:
-
+```sh
 mkdir ethpk
 cd ethpk
 npm init
 npm install keythereum
-
+```
 After that, edit the `package.json` file and add a script section like this:
 
 ```json
@@ -178,7 +178,7 @@ console.log("Private key:", privateKey.toString('hex'));
 ```
 Remember to replace the ADDRESS and PASSWORD with your own.
 
-Finally, run `npm run start` and wait for a while. It should output the public address and the private key of the inifial account like this:
+Finally, run `npm start` and wait for a while. It should output the public address and the private key of the inifial account like this:
 
     Extracting private key for 0xCF6d4AeCc9ABE064C8f46115746115aa4967700c...
     Private key: 2b0a9b87abbe21a0637e1abaa1634a4a67569981e1eb5434a180b71d658f312e
