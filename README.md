@@ -123,18 +123,18 @@ To make sure the network run as expected, run `geth attach` to connect to the ru
 Make sure the coinbase address is the same as the initial account's public address. Now verify its balance with this command at the Geth JavaScript console:
 
 ```js
-> eth.getBalance(eth.accounts[0], 'latest')
+eth.getBalance(eth.accounts[0], 'latest')
 ```
 
 It should return `1e+22`, which is the balance of the account in wei, or `10,000` ethers.
 
 To check if the initial account was unlocked and the network can create blocks for transactions, first get any account public address in MetaMask, and run the following command at the Geth console:
 ```js
-> eth.sendTransaction({from:eth.accounts[0], to:"0xF9E8DC188Cba0Bb26130E811D0037fcE39F19A48", value: web3.toWei(100, "ether")}) 
+eth.sendTransaction({from:eth.accounts[0], to:"0xF9E8DC188Cba0Bb26130E811D0037fcE39F19A48", value: web3.toWei(100, "ether")}) 
 ```
 That command should send 100 ethers from the intial account to the MetaMask account (which is `0xF9E8DC188Cba0Bb26130E811D0037fcE39F19A48` in this example). Now run:
 ```js
-> eth.getBalance(eth.accounts[0], 'latest')
+eth.getBalance(eth.accounts[0], 'latest')
 ```
 The result should be `9.9e+21` wei, which is `9,900` ethers (minus `100` spent ethers).
 
@@ -194,57 +194,57 @@ Now that the private key was retrieved, import it into MetaMask and start using 
 ## Useful Geth console commands
 Running node's info:
 ```js
-> admin.nodeInfo
+admin.nodeInfo
 ```
 
 `Clique` network status:
 ```js
-> clique.status()
+clique.status()
 ```
 
 Current block number:
 ```js
-> eth.blockNumber
+eth.blockNumber
 8131
 ```
 Get a block's info:
 ```js
-> eth.getBlock(8131)
+eth.getBlock(8131)
 ```
 
 Get a list of accounts owned by running client:
 ```js
-> eth.accounts
+eth.accounts
 ```
 
 Get an account's balance:
 ```js
-> web3.fromWei(eth.getBalance(ADDRESS, 'latest'), "ether")
+web3.fromWei(eth.getBalance(ADDRESS, 'latest'), "ether")
 ```
 
 Send some ethers (`SENDER` and `RECIPIENT` are addresses, `VALUE` is in ether):
 ```js
-> eth.sendTransaction({from: SENDER, to: RECIPIENT, value: web3.toWei(VALUE, "ether")}) 
+eth.sendTransaction({from: SENDER, to: RECIPIENT, value: web3.toWei(VALUE, "ether")}) 
 ```
 
 Get a transaction's details:
 ```js
-> eth.getTransaction("0x79ac75f98630b3eba7ac44f207639865ce5b2adec674332bf74f22a29986a957")
+eth.getTransaction("0x79ac75f98630b3eba7ac44f207639865ce5b2adec674332bf74f22a29986a957")
 ```
 
 Get all transactions' details:
 ```js
-> Array(eth.blockNumber).fill().map((e, i) => i).filter(e => eth.getBlock(e).transactions.length ? true: false).map(e =>  eth.getBlock(e).transactions.map(e => eth.getTransaction(e)))
+Array(eth.blockNumber).fill().map((e, i) => i).filter(e => eth.getBlock(e).transactions.length ? true: false).map(e =>  eth.getBlock(e).transactions.map(e => eth.getTransaction(e)))
 ```
 
 Get all transaction sent from ADDRESS:
 ```js
-> Array(eth.blockNumber).fill().map((e, i) => i).filter(e => eth.getBlock(e).transactions.length ? true: false).map(e => eth.getBlock(e).transactions.map(e => eth.getTransaction(e)).filter(e => e.from == ADDRESS.toLowerCase()))
+Array(eth.blockNumber).fill().map((e, i) => i).filter(e => eth.getBlock(e).transactions.length ? true: false).map(e => eth.getBlock(e).transactions.map(e => eth.getTransaction(e)).filter(e => e.from == ADDRESS.toLowerCase()))
 ```
 
 Get all transaction sent to ADDRESS:
 ```js
-> Array(eth.blockNumber).fill().map((e, i) => i).filter(e => eth.getBlock(e).transactions.length ? true: false).map(e => eth.getBlock(e).transactions.map(e => eth.getTransaction(e)).filter(e => e.to == ADDRESS.toLowerCase()))
+Array(eth.blockNumber).fill().map((e, i) => i).filter(e => eth.getBlock(e).transactions.length ? true: false).map(e => eth.getBlock(e).transactions.map(e => eth.getTransaction(e)).filter(e => e.to == ADDRESS.toLowerCase()))
 ```
 
 ## Utilities
