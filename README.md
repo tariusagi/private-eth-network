@@ -1,5 +1,7 @@
 # Set up a private Ethereum network
-Guide to set up a private, clique Ethereum network for research and development
+Guide to set up a private, clique Ethereum network for research and development. 
+
+"Clique" means using Proof-of-Authority consensus mechanism built into Geth (Go Ethereum, an Ethereum node client program). PoA is chosen because it allows predefined validators, which is very suitable for a small, even single-node, network like in this guide. More on PoA [here](https://academy.binance.com/en/articles/proof-of-authority-explained).
 
 Based on this [Private Networks](https://geth.ethereum.org/docs/interface/private-network) link.
 
@@ -17,12 +19,12 @@ Run `geth account new` and enter your password, Geth should create a new account
     Your new account is locked with a password. Please give a password. Do not forget this password.
     Password:
     Repeat password:
-
+    
     Your new key was generated
-
+    
     Public address of the key:   0xCF6d4AeCc9ABE064C8f46115746115aa4967700c
     Path of the secret key file: /home/ubuntu/.ethereum/keystore/UTC--2021-11-25T11-50-16.555208031Z--cf6d4aecc9abe064c8f46115746115aa4967700c
-
+    
     - You can share your public address with anyone. Others need it to interact with you.
     - You must NEVER share the secret key with anyone! The key controls access to your funds!
     - You must BACKUP your key file! Without the key, it's impossible to access account funds!
@@ -59,8 +61,10 @@ Create the `~/.ethereum/genesis.json` with the following content:
 }
 ```
 In the above file, note these settings:
-- `chainId` was set to `7882`.
-- `clique` consensus mechanism was set. Minimum difference between blocks' timestamps is 15s and epoch is set to 30000 blocks to mimic mainnet behavior. See [EIP-225](https://eips.ethereum.org/EIPS/eip-225).
+- `chainId` was set to `7882`. Actually this can be any number of your choice, but it's better to avoid using well-known chain's ID. A list of well-known chain' IDs can be found [here](https://chainlist.org/).
+- `clique` consensus mechanism was set. Minimum difference between blocks' timestamps is 15s and epoch is set to 30000 blocks to mimic mainnet behavior (see [EIP-225](https://eips.ethereum.org/EIPS/eip-225)). These settings basically mean that a new block will be record every 15s, which looks like real-world mainnet. This is important because if transaction happens too quickly, the developers might not take into account the real user experience in real-world mainnet while designing the UI/UX for their apps.
+- `difficulty` was set to `1`, so this node can easily find new blocks without taking too long to compute.
+- `gasLimit` was set to `8000000`, that means this node will reject transaction that costs more than `8,000,000` gas.
 - `extradata` include the intial account's public address (in between a series of 32 and 65 zeroes, without `0x` prefix).
 - `balance` was set `10000000000000000000000` wei, which is `10,000` ethers.
 
@@ -106,13 +110,13 @@ That command will start an Ethereum network, which:
 To make sure the network run as expected, run `geth attach` to connect to the running network. The Geth's console should open like this:
 
     Welcome to the Geth JavaScript console!
-
+    
     instance: Geth/v1.10.13-stable-7a0c19f8/linux-arm64/go1.17.2
     coinbase: 0xcf6d4aecc9abe064c8f46115746115aa4967700c
     at block: 129 (Thu Nov 25 2021 20:00:59 GMT+0700 (+07))
     datadir: /home/ubuntu/.ethereum
     modules: admin:1.0 clique:1.0 debug:1.0 eth:1.0 miner:1.0 net:1.0 personal:1.0                                                                                                              rpc:1.0 txpool:1.0 web3:1.0
-
+    
     To exit, press ctrl-d or type exit
     >
 
@@ -138,8 +142,10 @@ The result should be `9.9e+21` wei, which is `9,900` ethers (minus `100` spent e
 Open MetaMask wallet, and create a new network with the following parameters:
 
 - Network Name: `My network` (or any other name).
-- New RPC URL: `http://192.168.99.4:8545`.
+- New RPC URL: `http://192.168.1.2:8545`.
 - Chain ID: `7882`.
+
+Remember to replace the node's IP with your own (`192.168.1.2` in this example).
 
 After that, switch to this new network. The MetaMask's account which was used to receive the transaction from the network's initial account in the previous step should now show `100 ETH` in its balance.
 
@@ -176,7 +182,7 @@ var keyObject = keth.importFromFile(ADDRESS, DATADIR);
 var privateKey = keth.recover(PASSWORD, keyObject);
 console.log("Private key:", privateKey.toString('hex'));
 ```
-Remember to replace the ADDRESS and PASSWORD with your own.
+Remember to replace the `ADDRESS` and `PASSWORD` with your own.
 
 Finally, run `npm start` and wait for a while. It should output the public address and the private key of the inifial account like this:
 
