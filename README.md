@@ -205,11 +205,10 @@ clique.status()
 Current block number:
 ```js
 eth.blockNumber
-8131
 ```
 Get a block's info:
 ```js
-eth.getBlock(8131)
+eth.getBlock(BLOCK_NUMBER)
 ```
 
 Get a list of accounts owned by running client:
