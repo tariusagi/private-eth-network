@@ -62,7 +62,7 @@ Create the `~/.ethereum/genesis.json` with the following content:
 ```
 In the above file, note these settings:
 - `chainId` was set to `7882`. Actually this can be any number of your choice, but it's better to avoid using well-known chain's ID. A list of well-known chain' IDs can be found [here](https://chainlist.org/).
-- `clique` consensus mechanism was set. Minimum difference between blocks' timestamps is 15s and epoch is set to 30000 blocks to mimic mainnet behavior (see [EIP-225](https://eips.ethereum.org/EIPS/eip-225)). These settings basically mean that a new block will be record every 15s, which looks like real-world mainnet. This is important because if transaction happens too quickly, the developers might not take into account the real user experience in real-world mainnet while designing the UI/UX for their apps.
+- `clique` consensus mechanism was set. Minimum difference (`period`) between blocks' timestamps is `15` seconds and `epoch` is set to `30000` blocks to mimic mainnet behavior (see [EIP-225](https://eips.ethereum.org/EIPS/eip-225)). These settings basically mean that a new block will be record every 15s, which looks like real-world mainnet. This is important because if transaction happens too quickly, the developers might not take into account the real user experience in real-world mainnet while designing the UI/UX for their apps. But if you just want the transactions to be done almost *immediately*, then set `period` to `0`. That setting force `geth` to mine a new block only when there's a new transaction. This behavior is similar to `hardhat` local network.
 - `difficulty` was set to `1`, so this node can easily find new blocks without taking too long to compute.
 - `gasLimit` was set to `8000000`, that means this node will reject transaction that costs more than `8,000,000` gas.
 - `extradata` include the intial account's public address (in between a series of 32 and 65 zeroes, without `0x` prefix).
@@ -175,7 +175,7 @@ Now create the `index.js` file with this content:
 const keth = require("keythereum");
 const DATADIR = `${process.env.HOME}/.ethereum/`;
 const ADDRESS = "0xCF6d4AeCc9ABE064C8f46115746115aa4967700c";
-const PASSWORD = "Hocnuahocmai!";
+const PASSWORD = "mypassword";
 
 console.log("Extracting private key for " + ADDRESS + "...");
 var keyObject = keth.importFromFile(ADDRESS, DATADIR);
