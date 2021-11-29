@@ -1,17 +1,17 @@
 # Set up a private Ethereum network
-Guide to set up a private, clique Ethereum network for research and development. 
+Normally, we can use either a local network like [Hardhat](https://hardhat.org/) or a public testnet like [Rinkedby](https://www.rinkeby.io/) for testing our dapps. But they have their problems. Local network like `Hardhat` is more suitable for quick tests, because it is not persistent, which means its state get reset everytime it run. Public testnets like `Rinkedby` is slow and we have to ask around or from a faucet for a very limited amount of ethers to use.
 
-"Clique" means using Proof-of-Authority consensus mechanism built into Geth (Go Ethereum, an Ethereum node client program). PoA is chosen because it allows predefined validators, which is very suitable for a small, even single-node, network like in this guide. More on PoA [here](https://academy.binance.com/en/articles/proof-of-authority-explained).
+Therefore it's best, in my opinion, to have our own private, persistent testnet running somewhere in your home. We will have full control of its settings and configuration. We can even create snapshots and backups of that network.
 
-Based on this [Private Networks](https://geth.ethereum.org/docs/interface/private-network) link.
+So, this guide aims to set up a private, "*clique*", Ethereum network for research and development, based on the [Private Networks](https://geth.ethereum.org/docs/interface/private-network) section on the [Go Ethereum](https://geth.ethereum.org), or `Geth`, one of the major node client for Ethereum networks. "*Clique*" means using Proof-of-Authority consensus mechanism built into Geth. PoA is chosen for this guide, because it allows predefined validators, which is very suitable for a small, even single-node, network like in this guide. More on PoA [here](https://academy.binance.com/en/articles/proof-of-authority-explained).
 
-*The following steps was done on a Raspberry Pi 4 (with 4GB RAM) board with a 16GB SD card.*
+*The following steps were done on a Raspberry Pi 4 with a small SD card.*
 
 ## Install Geth
-Just follow this [Installing Geth](https://geth.ethereum.org/docs/install-and-build/installing-geth#install-on-ubuntu-via-ppas) link.
+Just follow this [Installing Geth](https://geth.ethereum.org/docs/install-and-build/installing-geth#install-on-ubuntu-via-ppas) section.
 
 ## Create an initial account
-Run `geth account new` and enter your password, Geth should create a new account and output something like:
+At the shell prompt, run `geth account new` and enter your password, Geth should create a new account and output something like:
 
     ubuntu@pi4:~$ geth account new
     INFO [11-25|18:49:49.063] Maximum peer count                       ETH=50 LES=0 total=50
@@ -31,7 +31,7 @@ Run `geth account new` and enter your password, Geth should create a new account
     - You must REMEMBER your password! Without the password, it's impossible to decrypt the key!
 
 
-Remember the password, the public address and path of the secret key file, we will need them later.
+Take note of the password and the public address, we will need them later.
 
 ## Configure the genesis block
 Create the `~/.ethereum/genesis.json` with the following content:
@@ -48,7 +48,7 @@ Create the `~/.ethereum/genesis.json` with the following content:
     "petersburgBlock": 0,
     "istanbulBlock": 0,
     "clique": {
-      "period": 15,
+      "period": 0,
       "epoch": 30000
     }
   },
@@ -62,7 +62,8 @@ Create the `~/.ethereum/genesis.json` with the following content:
 ```
 In the above file, note these settings:
 - `chainId` was set to `7882`. Actually this can be any number of your choice, but it's better to avoid using well-known chain's ID. A list of well-known chain' IDs can be found [here](https://chainlist.org/).
-- `clique` consensus mechanism was set. Minimum difference (`period`) between blocks' timestamps is `15` seconds and `epoch` is set to `30000` blocks to mimic mainnet behavior (see [EIP-225](https://eips.ethereum.org/EIPS/eip-225)). These settings basically mean that a new block will be record every 15s, which looks like real-world mainnet. This is important because if transaction happens too quickly, the developers might not take into account the real user experience in real-world mainnet while designing the UI/UX for their apps. But if you just want the transactions to be done almost *immediately*, then set `period` to `0`. That setting force `geth` to mine a new block only when there's a new transaction. This behavior is similar to `hardhat` local network.
+- `clique` consensus mechanism was defined. 
+- `period` is the minimum difference between blocks', and was set `0` to force `geth` to mine a new block only when there're new transactions. We don't need our network to mine unneccessary blocks.
 - `difficulty` was set to `1`, so this node can easily find new blocks without taking too long to compute.
 - `gasLimit` was set to `8000000`, that means this node will reject transaction that costs more than `8,000,000` gas.
 - `extradata` include the intial account's public address (in between a series of 32 and 65 zeroes, without `0x` prefix).
@@ -94,9 +95,9 @@ First, create the `~/.ethereum/password.txt` and put the password used to create
 
 Then, run:
 
-    geth --nodiscover --http --http.vhosts "*" --http.addr 0.0.0.0 --http.port 8545 --http.api admin,personal,eth,net,web3,txpool,miner,clique --mine --unlock CF6d4AeCc9ABE064C8f46115746115aa4967700c --password ~/.ethereum/password.txt --allow-insecure-unlock
+    geth --nodiscover --http --http.vhosts "*" --http.addr 0.0.0.0 --http.port 8545 --http.api admin,personal,eth,net,web3,txpool,miner,clique --mine --unlock 0xCF6d4AeCc9ABE064C8f46115746115aa4967700c --password ~/.ethereum/password.txt --allow-insecure-unlock
 
-Make sure to put the initial account address after the `--unlock` option, ưhich is `CF6d4AeCc9ABE064C8f46115746115aa4967700c` in this example.
+Make sure to put the initial account address after the `--unlock` option, which is `0xCF6d4AeCc9ABE064C8f46115746115aa4967700c` in this example.
 
 That command will start an Ethereum network, which:
 - Disable peers discovery. Peers must be added manually.
